@@ -200,5 +200,3 @@ ros2 run demo_cpp_service patrol_client
 
 这是我在学习 ROS 2 过程中的实践项目，主要用于练习自定义服务通信与 `turtlesim` 小海龟控制。
 
-```
-```
