@@ -35,7 +35,7 @@ turtle_ws/
 patrol_client.cpp：服务客户端，定时发送随机巡逻目标点
 turtle_control.cpp：服务端和控制节点，接收目标点并控制海龟移动
 
-功能说明
+## 功能说明
 
 patrol_client
 客户端节点会：
@@ -54,7 +54,7 @@ turtle_control
 订阅 /turtle1/pose 获取当前海龟位置
 发布 /turtle1/cmd_vel 控制海龟向目标点移动
 
-实现思路
+## 实现思路
 
 该项目的核心思路如下：
 客户端通过 ROS 2 service 向服务端发送目标点
@@ -69,7 +69,7 @@ turtle_control
 当角度误差较大时优先旋转
 对线速度设置最大值限制，避免移动过快
 
-依赖环境
+## 依赖环境
 
 ROS 2
 rclcpp
@@ -77,7 +77,7 @@ geometry_msgs
 turtlesim
 colcon
 
-编译方法
+## 编译方法
 
 在 workspace 根目录下执行：
 
@@ -96,7 +96,7 @@ ros2 run demo_cpp_service patrol_client
 
 运行后，客户端会周期性发送随机目标点，小海龟会朝目标点移动。
 
-学习内容
+## 学习内容
 
 通过这个项目，我主要练习了以下内容：
 ROS 2 workspace 和 package 的基本组织方式
@@ -119,6 +119,6 @@ turtlesim 速度控制
 实现固定路线巡逻，而不是随机目标点
 增加更完整的日志输出和状态反馈
 
-说明
+## 说明
 
 这是我在学习 ROS 2 过程中的实践项目，主要用于练习服务通信与小海龟控制。
