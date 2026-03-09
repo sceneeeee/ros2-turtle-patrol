@@ -1,7 +1,8 @@
 # ros2-turtle-patrol
 
-一个基于 **ROS 2 + turtlesim + C++** 的小海龟巡逻练习项目。  
-项目通过 **自定义 Service 接口 + 订阅/发布控制** 的方式，让客户端周期性发送随机目标点，服务端接收目标点后控制 `turtlesim` 中的小海龟移动到指定位置。
+一个基于 **ROS 2 + turtlesim + C++** 的小海龟巡逻练习项目。
+
+项目通过 **自定义 Service 接口 + 发布/订阅控制** 的方式，让客户端周期性发送随机目标点，服务端接收目标点后控制 `turtlesim` 中的小海龟移动到指定位置。
 
 这个项目适合用来练习：
 
@@ -11,6 +12,7 @@
 - `publisher / subscriber` 的基本使用
 - `turtlesim` 的运动控制
 - 基于目标点的简单比例控制
+- ROS 2 launch 文件编写与参数传递
 
 ---
 
@@ -46,6 +48,8 @@ ros2-turtle-patrol/
     └── demo_cpp_service/
         ├── CMakeLists.txt
         ├── package.xml
+        ├── launch/
+        │   └── demo.launch.py
         └── src/
             ├── patrol_client.cpp
             └── turtle_control.cpp
@@ -58,12 +62,6 @@ ros2-turtle-patrol/
 ### 1. `chapt4_turtle_interfaces`
 
 这是接口包，用于定义自定义服务：
-
-```text
-srv/Patrol.srv
-```
-
-服务内容如下：
 
 ```srv
 float32 target_x
@@ -86,10 +84,11 @@ int8 result
 
 ### 2. `demo_cpp_service`
 
-这是功能包，包含两个 C++ 节点：
+这是功能包，包含两个 C++ 节点和一个 launch 文件：
 
 * `patrol_client.cpp`：服务客户端，周期性发送随机目标点
 * `turtle_control.cpp`：服务端 + 控制节点，接收目标点并驱动小海龟移动
+* `launch/demo.launch.py`：一键启动整个示例系统
 
 ---
 
@@ -165,6 +164,28 @@ patrol_client
                     ↓
                turtlesim 中的 turtle1
 ```
+
+---
+
+## Launch 功能
+
+项目现在已经加入了 `demo.launch.py`，可以一次性启动整个示例系统。
+
+这个 launch 文件会：
+
+* 声明一个 launch 参数 `launch_arg_bg`
+* 启动 `turtlesim_node`
+* 将 `launch_arg_bg` 作为 `background_g` 参数传给 `turtlesim_node`
+* 启动 `patrol_client`
+* 启动 `turtle_control`
+
+默认参数：
+
+```text
+launch_arg_bg = 150
+```
+
+也就是说，默认会将 `turtlesim` 背景的绿色通道设置为 `150`。
 
 ---
 
@@ -280,22 +301,43 @@ source install/setup.bash
 
 ## 运行方法
 
-建议开启三个终端。
+### 方法一：使用 launch 一键启动
 
-### 终端 1：启动 turtlesim
+```bash
+source install/setup.bash
+ros2 launch demo_cpp_service demo.launch.py
+```
+
+指定背景绿色通道：
+
+```bash
+ros2 launch demo_cpp_service demo.launch.py launch_arg_bg:=0
+```
+
+或者：
+
+```bash
+ros2 launch demo_cpp_service demo.launch.py launch_arg_bg:=255
+```
+
+---
+
+### 方法二：手动分终端启动
+
+#### 终端 1：启动 turtlesim
 
 ```bash
 ros2 run turtlesim turtlesim_node
 ```
 
-### 终端 2：启动服务端控制节点
+#### 终端 2：启动服务端控制节点
 
 ```bash
 source install/setup.bash
 ros2 run demo_cpp_service turtle_control
 ```
 
-### 终端 3：启动客户端节点
+#### 终端 3：启动客户端节点
 
 ```bash
 source install/setup.bash
@@ -332,7 +374,11 @@ ros2 run demo_cpp_service patrol_client
 
 这比较符合 ROS 2 工程化的组织方式。
 
-### 3. 控制逻辑简单直观
+### 3. 增加了 launch 启动方式
+
+除了原来的手动多终端运行，现在也可以通过 launch 文件一键启动整个系统，并通过参数修改 `turtlesim` 的背景绿色通道。
+
+### 4. 控制逻辑简单直观
 
 代码重点是练习通信与控制流程，因此控制器设计得比较基础，便于理解。
 
@@ -383,7 +429,7 @@ msg.angular.z = fabs(angle);
 * 实现固定路线巡逻
 * 增加目标到达提示
 * 增加更清晰的状态反馈
-* 使用参数动态调整 `k` 和 `max_speed`
+* 使用更多 launch 参数，例如背景 RGB、定时周期、速度参数等
 
 ---
 
@@ -396,6 +442,7 @@ msg.angular.z = fabs(angle);
 * ROS 2 C++ Service 客户端与服务端开发
 * `publisher / subscriber` 的配合使用
 * turtlesim 的基础控制
+* launch 文件编写与参数传递
 * 从“请求目标”到“闭环移动”的基本思路
 
 ---
@@ -403,4 +450,3 @@ msg.angular.z = fabs(angle);
 ## License
 
 Apache-2.0
-
